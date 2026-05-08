@@ -19,6 +19,7 @@ Here's the list:
 | [_nz-confluence-user-macro-template.vtl](./_nz-confluence-user-macro-template.vtl) | Header template for User Macros |
 | [nz-auto-reload.vtl](./nz-auto-reload.vtl) | Automatically reload a page after a given time. Use this macro only once on a page. |
 | [nz-expand-all.vtl](nz-expand-all.vtl) | Creates a link or button to toggle all [Expand macros](https://confluence.atlassian.com/display/DOC/Expand+Macro) at once on the current page. |
+| [nz-simple-link-button.vtl](./nz-simple-link-button.vtl) | Macro for adding simple stylish buttons. |
 | [nz-space-administrators.vtl](./nz-space-administrators.vtl) | Macro to display a list of space administrators. |
 
 ## A note of support

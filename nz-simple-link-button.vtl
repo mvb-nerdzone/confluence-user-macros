@@ -1,0 +1,57 @@
+## Macro Name: nz_simple-link-button
+## Macro Title: Simple Link Button
+## Description: Create a nice and simple button to any internal or external content.
+## Categories: Formatting, Visuals & images
+## Macro Body Processing: No
+##
+## Author: MvB - https://nerdzone.nl
+## Credits: -
+## Date: 2020-10-17
+## Version: 1.0.1
+
+## @param ButtonText:title=Button Text|type=string|required=false|default=Button|option-showNameInPlaceholder=false|option-showValueInPlaceholder=true|desc=Change the text on the button to something descriptive.
+
+## @param ToolTip:title=Tooltip|type=string|required=false|option-showNameInPlaceholder=false|option-showValueInPlaceholder=false|desc=The tooltip of the button. Default is the title.
+
+## @param URL:title=URL|type=string|required=false|option-showNameInPlaceholder=false|option-showValueInPlaceholder=true|desc=Use full or relative URL's. E.g http://www.atlassian.com or /x/SYDxAg
+
+## @param ButtonColor:title=Button Color|type=enum|enumValues=DimGrey,Darkgray,FireBrick,IndianRed,DarkGreen,SeaGreen,MidnightBlue,RoyalBlue,DarkCyan,LightSeaGreen,Indigo,PaleVioletRed,OliveDrab,Sienna,Coral|default=DarkGrey|option-showNameInPlaceholder=false|option-showValueInPlaceholder=false
+
+## @param ButtonSize:title=Button size|type=enum|enumValues=Tiny,Small,Medium,Large|default=Medium|option-showNameInPlaceholder=false|option-showValueInPlaceholder=false
+
+#### Style the button
+#set ($theTextColor = "white")
+<style>
+.nzui-button-$paramButtonColor {
+  background-color: $paramButtonColor;
+  opacity: .7;
+  transition: opacity .2s ease-out;
+  color: $theTextColor;
+  display: inline-block;
+  border-radius: 3.01px;
+  text-decoration: none;
+#if ($paramButtonSize == "Tiny")
+  font-size: .75em;
+  line-height: 1.1em;
+  padding: 2px 4px;
+#elseif ($paramButtonSize == "Small")
+  font-size: .9em;
+  line-height: 1.4em;
+  padding: 1px 7px 2px;
+#elseif ($paramButtonSize == "Large")
+  font-size: 1em;
+  line-height: 2.2em;
+  padding: 2px 12px;
+#else
+  font-size: 1em;
+  line-height: 1.7em;
+  padding: 2px 10px;
+#end
+}
+.nzui-button-$paramButtonColor:hover {
+
+  opacity: 1;
+  transition: opacity .2s ease-out;
+}
+</style>
+<a href="$paramURL" title="$paramToolTip"><span class="nzui-button-$paramButtonColor">$paramButtonText</span></a>
