@@ -1,0 +1,145 @@
+## Macro Name: nz-create-from-template-advanced
+## Macro Title: Create from Template (advanced)
+## Description: Button to create a new page from a specific template on a specific location with an automatic incremental numeric identifier or current date.
+## Categories: Confluence content, Formatting, Navigation, Visuals & images
+## Macro Body Processing: No
+##
+## Author: MvB - https://nerdzone.nl
+## Credits: -
+## Date: 2019-07-25
+## Version: v1.0.12
+
+## Variable type helpers
+#set ($Integer = 0)
+
+## @param ButtonText:title=Button Text|type=string|required=false|default=New page|option-showNameInPlaceholder=false|option-showValueInPlaceholder=true|desc=Change the text on the button to something descriptive.
+
+## @param TemplateID:title=Template|type=string|required=false|option-showNameInPlaceholder=false|option-showValueInPlaceholder=false|desc=Identifier number from the template to use (use next toggle and refresh as a helper).
+## @param ShowSpaceTemplates:title=Show Space Templates|type=boolean|default=false|option-showNameInPlaceholder=false|option-showValueInPlaceholder=false|desc=Enable this and refresh the preview on the right to reveal all Space Template and ID's as a helper to fill in the previous field.
+
+## @param ParentPage:title=Parent page|type=confluence-content|required=false|option-showNameInPlaceholder=false|option-showValueInPlaceholder=false|desc=Select a page where to create the page (default=current page). Note: Only pages in the current space are supported.
+
+## @param UseCurrentDate:title=Use current date as title|type=boolean|default=false|option-showNameInPlaceholder=false|option-showValueInPlaceholder=false|desc=Use the current date (YYYY-MM-DD) as title. When checked, the next three fields are of no value.
+
+## @param ItemPrefix:title=Prefix|type=string|required=false|option-showNameInPlaceholder=false|option-showValueInPlaceholder=false|desc=Define the prefix, e.g. ACTION- (see documentation).
+## @param PaddingDigits:title=Number of digits for zero-padding|required=false|default=3|option-showNameInPlaceholder=false|option-showValueInPlaceholder=false|desc=This formats the number with leading zeros. With a number of digits = 3, the serials will be 001,002,etc.
+## @param StartNumber:title=Starting number|type=int|default=1|required=false|option-showNameInPlaceholder=false|option-showValueInPlaceholder=false
+
+## @param ButtonColor:title=Button Color|type=enum|enumValues=Grey,nz-pink,nz-blue,nz-sky,nz-horizon,nz-summer,nz-evening,nz-clay,nz-ice,nz-green|default=Grey|option-showNameInPlaceholder=false|option-showValueInPlaceholder=false
+## @param ButtonSize:title=Button size|type=enum|enumValues=Small,Medium|default=Medium|option-showNameInPlaceholder=false|option-showValueInPlaceholder=false
+## TODO: icon parameter
+## ## @param ShowAddIcon:title=Show add-icon (+)|type=boolean|default=true|option-showNameInPlaceholder=false|option-showValueInPlaceholder=false
+## TODO: open in external window
+## ## @param OpenExternal:title=Open in new window|type=boolean|default=false|option-showNameInPlaceholder=false|option-showValueInPlaceholder=false
+
+#### TemplateID-helper - this is apparently the only way to get ID's from space-templates, as an enumValue-list cannot be a parameter. Refresh the preview to get the results, copy the id, deselect this value and continue...
+#if ($paramShowSpaceTemplates == true)
+<hr>
+#set ($spaceTemplates = $space.getPageTemplates())
+#foreach ($spaceTemplate in $spaceTemplates)
+  $spaceTemplate.getTitle() -- $spaceTemplate.getContentTemplateId() <br>
+#end
+<hr>
+#end
+
+#### Style the button - this is a specific colorset, but can be changed as needed
+#set ($theTextColor = "255, 255, 255")
+#if ($paramButtonColor == "nz-pink")
+  #set ($theButtonColor = "227, 5, 111")
+#elseif ($paramButtonColor == "nz-blue")
+  #set ($theButtonColor = "4, 55, 117")
+#elseif ($paramButtonColor == "nz-sky")
+  #set ($theButtonColor = "0, 170, 231")
+#elseif ($paramButtonColor == "nz-horizon")
+  #set ($theButtonColor = "117, 192, 67")
+#elseif ($paramButtonColor == "nz-summer")
+  #set ($theButtonColor = "247, 149, 61")
+#elseif ($paramButtonColor == "nz-evening")
+  #set ($theButtonColor = "73, 38, 131")
+#elseif ($paramButtonColor == "nz-clay")
+  #set ($theButtonColor = "195, 130, 90")
+#elseif ($paramButtonColor == "nz-ice")
+  #set ($theButtonColor = "200, 217, 223")
+  #set ($theTextColor = "100, 108, 111")
+#elseif ($paramButtonColor == "nz-green")
+  #set ($theButtonColor = "57,135,12")
+#else
+  #set ($theButtonColor = "127, 127, 127")
+#end
+<style>
+a.lui-button-$paramButtonColor, a.lui-button-$paramButtonColor:focus, a.lui-button-$paramButtonColor:link, a.lui-button-$paramButtonColor:visited, a.lui-button-$paramButtonColor:active {
+  background-color: rgba($theButtonColor, 0.60);
+  color: rgba($theTextColor, 1.00);
+#if ($paramButtonSize == "Small")
+  font-size: 8pt;
+  height: 20px;
+  line-height: 14px !important;
+  padding: 2px 10px;
+#end
+}
+a.lui-button-$paramButtonColor:hover {
+  background-color: rgba($theButtonColor, 1.00);
+  color: rgba($theTextColor, 1.00);
+#if ($paramButtonSize == "Small")
+  font-size: 8pt;
+  height: 20px;
+  line-height: 14px !important;
+  padding: 2px 10px;
+#end
+}
+</style>
+
+## Get parent page object
+## TODO: Assume the given page is in the same space, otherwise it fails.
+#set ($theSpaceKey=$space.getKey())
+#set ($theParentPage = $pageManager.getPage($theSpaceKey , $paramParentPage))
+
+## Use today (paramUseCurrentDate == true) of use an auto-increment.
+#if ($paramUseCurrentDate == true)
+  #set ($theNewTitle = $action.dateFormatter.formatGivenString("yyyy-MM-dd", $content.currentDate))
+#else
+
+  ## Regex to determine if the starting number is a number indeed, otherwise use 1 (one).
+  #if ($paramStartNumber.matches('^\d+'))
+    #set ($intHighest = $Integer.parseInt($paramStartNumber))
+  #else
+    #set ($intHighest = 1)
+  #end
+
+  ## Regex to determine if the padding digits are a number indeed, otherwise use 3 (three).
+    #if ($paramPaddingDigits.matches('^\d+'))
+    #set ($intPadding = $Integer.parseInt($paramPaddingDigits))
+  #else
+    #set ($intPadding = 3)
+  #end
+  #set ($thePadding = "")
+  #foreach($i in [1..$intPadding])
+    #set ($thePadding = $thePadding + "0")
+  #end
+
+  ## Determine lenght of prefix
+  #set ($intPrefixLength = $paramItemPrefix.length())
+
+  ## Get all subpages from parent object to determine current highest number, which defines the next new number (+1).
+  ## TODO: Document what's happening below.
+  #foreach ($theChildPage in $theParentPage.getChildren())
+    #set ($theChildPageTitle = $theChildPage.getTitle())
+    ## Bepalen of een subpagina begint met de ItemPrefix
+    #if ($theChildPageTitle.matches("^${paramItemPrefix}\d+.*"))
+      ## let op: we gaan er van uit dat er een spatie zit ACHTER de prefix+volgenummer. Als dat niet zo is, dan faalt onderstaande toewijzing.
+      #set ($theOutput=$theChildPageTitle.split('\s'))
+      #foreach ($theElement in $theOutput)
+        #set ($intElementSerial = $Integer.parseInt($theElement.substring($intPrefixLength)))
+        ## Bepalen of deze waarde groter dan of gelijk is aan de huidige maximum waarde - zo ja, dan moet de hoogste waarde 1 omhoog
+        #if ($intElementSerial >= $intHighest)
+          #set ($intHighest  = $intElementSerial + 1)
+        #end
+        #break
+      #end
+    #end
+  #end
+  ## TODO: Document what's happening below.
+  #set ($theNewTitle = ${paramItemPrefix} + $thePadding.substring($intHighest.toString().length()) + $intHighest.toString())
+#end
+
+<a class="lui-button-$paramButtonColor aui-button" href="/pages/createpage-entervariables.action?templateId=$paramTemplateID&spaceKey=$theSpaceKey&title=$theNewTitle&newSpaceKey=$theSpaceKey&fromPageId=$theParentPage.id">$paramButtonText</a>
