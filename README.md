@@ -11,7 +11,7 @@ But a couple of years ago our friends at [Atlassian](https://www.atlassian.com) 
 
 I'm still running an old unsupported instance for convenience, but it may or may not break on serverupdates. I won't test that anymore.
 
-Therefor I created this repo, which serves as a little archive. It contains some User Macros which may be useful to you. Feel free to use any of them. Note that some of them are credited to users in the community.
+Therefore I created this repo, which serves as a little archive. It contains some User Macros which may be useful to you. Feel free to use any of them. Note that some of them are credited to users in the community.
 
 Here's the list:
 |Filename|Description|
@@ -21,6 +21,7 @@ Here's the list:
 | [nz-expand-all.vtl](nz-expand-all.vtl) | Creates a link or button to toggle all [Expand macros](https://confluence.atlassian.com/display/DOC/Expand+Macro) at once on the current page. |
 | [nz-simple-link-button.vtl](./nz-simple-link-button.vtl) | Macro for adding simple stylish buttons. |
 | [nz-space-administrators.vtl](./nz-space-administrators.vtl) | Macro to display a list of space administrators. |
+| [nz-webfonts-advanced.vtl](.nz-webfonts-advanced.vtl) | Macro to style a text with a font from a URL. |
 
 ## A note of support
 The macros in this repo were all tested on an old formerly supported server version [v7.3.2](https://confluence.atlassian.com/doc/confluence-7-3-release-notes-983794557.html) of Confluence. If you create an [issue](https://github.com/nerdzone-nl/confluence-user-macros/issues) I might not be able to help as I've no access to any other instance anymore.

@@ -1,0 +1,21 @@
+## Macro Name: nz-webfonts-advanced
+## Macro Title: Webfonts (advanced)
+## Description: Outputs a text styled with a font from a URL. Currently very basic and best to use a serif font, as the fallback font is serif.
+## Categories: Formatting, Visuals & images
+## Macro Body Processing: Rendered
+##
+## Author: MvB - https://nerdzone.nl
+## Credits: -
+## Date: 2020-05-08
+## Version: 0.1.0
+
+## @param FontURL:title=Font URL|type=string|required=true
+## @param FontStyleName:title=Font style|type=string|required=true
+## @param FontSize:title=Font size|type=string|required=true
+## @param FontColor:title=Font color|type=string|required=true
+
+<style type="text/css">
+@font-face {font-family: $paramFontStyleName ; src: url('$paramFontURL') format('truetype');}
+.$paramFontStyleName {font-family: '$paramFontStyleName', serif;}
+</style>
+<div class="$paramFontStyleName" style="font-size: $paramFontSize; color: $paramFontColor;">$body</div>
